@@ -1,3 +1,4 @@
+""" @# 仓内行为识别 """
 import cv2
 import os
 import base64
@@ -58,7 +59,7 @@ def log_execution_time(func):
         return result
     return wrapper
 
-class Spinner:
+class Spinner:       #??? 干嘛用的
     def __init__(self, message="Processing..."):
         self.spinner_symbols = "|/-\\"
         self.idx = 0
@@ -552,8 +553,8 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                     'file': open(audio_path, 'rb'),
                     'model': (None, 'whisper-1'),
                 }
-                spinner.stop()
-                spinner = Spinner("Transcribing Audio...")
+                spinner.stop()#???
+                spinner = Spinner("Transcribing Audio...")#???
                 spinner.start()
                 # Actual audio transcription occurs in either OpenAI or Azure
                 @retry(stop_max_attempt_number=3)
@@ -603,7 +604,7 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                 current_transcription = tscribe
             else:
                 print("No audio track found in video clip. Skipping audio extraction and transcription.")
-            spinner.stop()
+            spinner.stop()#???
             spinner = Spinner("Processing the "+str(packet_count)+" Frames and Audio with AI...")
             spinner.start()
 
@@ -704,7 +705,7 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
 # AnalyzeVideo("test_video/car-driving.mov",6,10,False)
 # AnalyzeVideo("2024.9.1_2/瞌睡.mp4",5,10,False)
 # AnalyzeVideo("2024.9.1/儿童低头睡觉.mp4",5,10,False)
-AnalyzeVideo("2024.9.1/儿童身体伸出窗外-已伸出.mp4",5,5,False)
+AnalyzeVideo("/mnt/d/BT/DATA/V/liz/2024.9.1/儿童身体伸出窗外（已伸出）.mp4",5,5,False)
 # 儿童车内脱衣服
 # 毯子被扯掉
 # 儿童半跪

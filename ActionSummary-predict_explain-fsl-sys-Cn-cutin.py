@@ -1,3 +1,4 @@
+""" @# 用于识别自动驾驶打标的各种行为,包含鬼探头/抬杆/加塞 """
 import cv2
 import os
 import base64

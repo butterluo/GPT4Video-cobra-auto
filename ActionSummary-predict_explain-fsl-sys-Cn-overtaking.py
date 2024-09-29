@@ -1,3 +1,4 @@
+""" @# 用于识别自动驾驶打标的各种行为,包含鬼探头/抬杆/加塞 以及超车 """
 import cv2
 import os
 import base64
@@ -307,7 +308,7 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):  #fpi is frames per interval, fi is 
                         
                     # Few-shot learning metadata
                     Below are time series example images and their corresponding analysis to help you understand how to analyze and label the images:
-                    {fsl_payload} -> {assistant_response_relativeposition}
+                    {fsl_payload} -> {assistanth_response_relativeposition}
                             
                     Use these examples to understand how to analyze and analyze the new images. Now generate a similar JSON response for the following video analysis:
                     """
