@@ -1,4 +1,10 @@
-""" @# 仓内行为识别 """
+import gradio as gr
+import os
+import json
+import time
+import threading
+
+import gradio as gr
 import cv2
 import os
 import base64
@@ -7,21 +13,18 @@ from moviepy.editor import VideoFileClip
 import logging
 import json
 import sys
-import openai
 import threading
-from retrying import retry
 logging.getLogger('moviepy').setLevel(logging.ERROR)
 import time
 from functools import wraps
 from dotenv import load_dotenv
-import time
 
-final_arr=[]
+
 load_dotenv()
-
-#azure speech key
-speech_key=os.environ["AZURE_SPEECH_KEY"]
-
+vision_endpoint=os.environ["VISION_ENDPOINT"]
+vision_api_type=os.environ["VISION_API_TYPE"]
+vision_deployment=os.environ["VISION_DEPLOYMENT_NAME"]
+openai_api_key=os.environ["OPENAI_API_KEY"]
 #azure whisper key *
 AZ_WHISPER=os.environ["AZURE_WHISPER_KEY"]
 
@@ -36,58 +39,10 @@ azure_whisper_endpoint=os.environ["AZURE_WHISPER_ENDPOINT"]
 
 #Audio API type (OpenAI, Azure)* c
 audio_api_type=os.environ["AUDIO_API_TYPE"]
-
-#GPT4 vision APi type (OpenAI, Azure)*
-vision_api_type=os.environ["VISION_API_TYPE"]
-
-#OpenAI API Key*
-openai_api_key=os.environ["OPENAI_API_KEY"]
-
-#GPT4 Azure vision API Deployment Name*
-vision_deployment=os.environ["VISION_DEPLOYMENT_NAME"]
-
-
-#GPT
-vision_endpoint=os.environ["VISION_ENDPOINT"]
-def log_execution_time(func):
-    @wraps(func)  # Preserves the name and docstring of the decorated function
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        print(f"Function {func.__name__} took {end_time - start_time:.4f} seconds to complete.")
-        return result
-    return wrapper
-
-class Spinner:       #??? 干嘛用的
-    def __init__(self, message="Processing..."):
-        self.spinner_symbols = "|/-\\"
-        self.idx = 0
-        self.message = message
-        self.stop_spinner = False
-
-    def spinner_task(self):
-        while not self.stop_spinner:
-            sys.stdout.write(f"\r{self.message} {self.spinner_symbols[self.idx % len(self.spinner_symbols)]}")
-            sys.stdout.flush()
-            time.sleep(0.1)
-            self.idx += 1
-
-    def start(self):
-        self.stop_spinner = False
-        self.thread = threading.Thread(target=self.spinner_task)
-        self.thread.start()
-
-    def stop(self):
-        self.stop_spinner = True
-        self.thread.join()
-        sys.stdout.write('\r' + ' '*(len(self.message)+2) + '\r')  # Erase spinner
-        sys.stdout.flush()
-chapter_summary = {}
+final_arr = []
 miss_arr=[]
 
-@log_execution_time
-def AnalyzeVideo(vp,fi,fpi,face_rec=False):
+def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
 # Constants
     video_path = vp  # Replace with your video path
     output_frame_dir = 'frames'
@@ -109,7 +64,7 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
 
     #GPT 4 Vision Azure helper function
     def send_post_request(resource_name, deployment_name, api_key,data):
-        url = f"https://{resource_name}.openai.azure.com/openai/deployments/{deployment_name}/chat/completions?api-version=2023-03-15-preview" #2024-08-01-preview" #2024-06-01
+        url = f"https://{resource_name}.openai.azure.com/openai/deployments/{deployment_name}/chat/completions?api-version=2024-08-01-preview" #2024-06-01
         headers = {
             "Content-Type": "application/json",
             "api-key": api_key
@@ -123,15 +78,14 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
         response = requests.post(url, headers=headers, data=json.dumps(data))
         return response
     # GPT-4 vision analysis function
-    @retry(stop_max_attempt_number=3)
     def gpt4_vision_analysis(image_path, api_key, summary, trans):
         #array of metadata
         cont=[
 
-                # {
-                #     "type": "text",
-                #     "text": f"Audio Transcription for last {frame_interval} seconds: "+trans
-                # },  #@#TST SKIP audio transcription, because of the request rate limite of whisper 
+                {
+                    "type": "text",
+                    "text": f"Audio Transcription for last {frame_interval} seconds: "+trans
+                },
                 {
                     "type": "text",
                     "text": f"Next are the {frames_per_interval} frames from the last {frame_interval} seconds of the video:"
@@ -154,7 +108,7 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                     })
 
         #extraction template
-        json_form=str([json.dumps({"Start_Timestamp":"4.97s","sentiment":"Positive, Negative, or Neutral","End_Timestamp":"16s","scene_theme":"Dramatic","characters":"Characters is an array containing all the characters detected in the current scene.For each character, always provide the seven fields:'is_child','number_of_chilren','current_child','gender','location','wearing_seat_belt','Sleeping'.Example:[Man in hat, woman in jacket,{'is_child':'Yes','number_of_children':2,'current_child':'1','gender':'Male','location':'Rearleft'(distinguish each kid by location),'wearing_seat_belt':'否','Sleeping':'是,因为眼睛闭着,'description':'A boy about 6years old,wearing a blueT-shirt and jeans,sitting in the rear left seat without a seatbelt.'}]","summary":"Summary of what is occuring around this timestamp with actions included, uses both transcript and frames to create full picture, be detailed and attentive, be serious and straightforward in your description.Focus strongly on seatbelt location on the body and actions related to seatbelts.","actions":"Actions extracted via frame analysis","key_objects":"Any objects in the timerange, include colors along with descriptions. all people should be in this, with as much detail as possible extracted from the frame (clothing,colors,age) Be incredibly detailed","key_actions":"action labels extracted from actions, but do not miss any key actions listed in tasks","prediction":"Prediction of what will happen next especially seatbelt related actions or dangerous actions, based on the current scene."}),
+        json_form=str([json.dumps({"Start_Timestamp":"4.97s","sentiment":"Positive, Negative, or Neutral","End_Timestamp":"16s","scene_theme":"Dramatic","characters":"Characters is an array containing all the characters detected in the current scene.For each character, always provide the seven fields:'is_child','number_of_chilren','current_child','gender','location','wearing_seat_belt','Sleeping'.Example:[Man in hat, woman in jacket,{'is_child':'Infant','number_of_children':2,'current_child':'1','gender':'Male','location':'Rearleft'(distinguish each kid by location),'wearing_seat_belt':'否','Sleeping':'是,因为眼睛闭着,'description':'A boy about 6years old,wearing a blueT-shirt and jeans,sitting in the rear left seat without a seatbelt.'}]","summary":"Summary of what is occuring around this timestamp with actions included, uses both transcript and frames to create full picture, be detailed and attentive, be serious and straightforward in your description.Focus strongly on seatbelt location on the body and actions related to seatbelts.","actions":"Actions extracted via frame analysis","key_objects":"Any objects in the timerange, include colors along with descriptions. all people should be in this, with as much detail as possible extracted from the frame (clothing,colors,age) Be incredibly detailed","key_actions":"action labels extracted from actions, but do not miss any key actions listed in tasks","prediction":"Prediction of what will happen next especially seatbelt related actions or dangerous actions, based on the current scene."}),
         json.dumps({"Start_Timestamp":"16s","sentiment":"Positive, Negative, or Neutral","End_Timestamp":"120s","scene_theme":"Emotional, Heartfelt","characters":"Man in hat, woman in jacket","summary":"Summary of what is occuring around this timestamp with actions included, uses both transcript and frames to create full picture, detailed and attentive, be serious and straightforward in your description.","actions":"Actions extracted via frame analysis","key_objects":"Any objects in the timerange, include colors along with descriptions. all people should be in this, all people should be in this, with as much detail as possible extracted from the frame (clothing,colors,age). Be incredibly detailed","key_actions":"only key action labels extracted from actions","prediction":"Prediction of what will happen next, based on the current scene."})])
         
         if(vision_api_type=="Azure"):
@@ -184,12 +138,12 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                     You are an in-car AI video assistant to help passengers create comfortable environment. 
                     Task 1: Always execute and report in 'Characters' Recognition - PRIORITY ONE: 
                         - If there are children in the image, determine the following:
-                            •Is it a child: Yes, No, Infant, Child
+                            •Is it a child: No, Infant, Child
                             •Number of children: 0, 1, 2, 3...仔细观察可能被遮挡的位置,如果有人仅露出头发,大部分头部被遮挡,请把儿童数量也估算在内
                                     **RE-READING 儿童数量 IS REQUIRED FOR ALL TASKS**
                             •Gender: Male, Female, Unknown
                             •Location: Front passenger seat, Rear left, Rear center, Rear right
-                            •Wearing seat belt: Yes, No, Unknown (if unsure, report it as Unknown)
+                            •Wearing seat belt: No, Unknown (if unsure, report it as Unknown), Yes(Don't report as Yes if the seat belt is not visible, and you should **infer** the seat belt status from the visible part, especially the shoulder strap positioning and tension of the belt if visible, the belt should appear tight and crossing the chest. If the belt appears loose or not visible over the body, infer it as "No".)
                             •Sleeping: Yes(with criteria), No(with criteria)
 
                     Task 2: Children DANGEROUS Behavior Monitoring in Cabin - PRIORITY ONE:
@@ -205,7 +159,27 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                         5. If you find any child's hand resting on the door handle, you should report children's hand resting on which door handle.
                         6. If you find any child sticking their hand out of the window, you should report children sticking their hand out of which window.
                         7. If you find any child body sticking out of the window, you should report children sticking their body out of which window.
-                        8. **HIGH PRIORITY ** If you find any child unbuckling their seat belts, you should report children unbuckling seat belt with exact .
+                        8. **HIGH PRIORITY ** If you find any child not wearing/unbuckling their seat belts, you should report children unwearing/unbuckling seat belt with exact action("怎样解开了安全带","身上没系安全带").
+                          安全带识别逻辑：
+                            1.安全带位置规则：
+                            •如果在帧中检测到安全带从肩膀以上穿过，则判定安全带系好。
+                            •如果安全带低于肩膀，或者无法清晰看到肩膀以上的安全带，提示可能没有正确佩戴。
+                            2.检测方法：
+                            •在图像中检测安全带的颜色、位置，特别是观察肩膀和胸部区域是否有安全带。
+                            •使用帧推理方法，在连续帧中跟踪安全带的位置，确保它没有滑落。
+                            3.视觉提示：
+                            •模型可以在视觉帧中寻找安全带的关键位置（肩膀、胸部），如果安全带横跨这些区域，则输出“已系安全带”的判断。
+                            •帧间推理： 在连续帧中跟踪安全带的位置，确保它在肩膀上方区域保持不变。
+                            •视觉检测： 在每一帧中识别儿童的肩膀和胸部，并检查安全带是否清晰穿过这些位置。
+                          安全带推理逻辑:
+                            1)加强安全带推理过程:You should give your **thought process** of how you arrive to the conclusion of the child wearing/not wearing or unbuckling the seat belt.
+                            2)加强安全带动作推理细节:Be specific about seatbelt-related actions. Instead of simply stating "unbuckling seatbelt," report the exact physical actions observed in the frames. For example: "Child reaches for the buckle, pulls it multiple times, attempts to unfasten it" or "Child twists body and uses hand to push against the seatbelt." 
+                            3)加强安全带的背景观察和推理:Ensure that for each frame, the seatbelt's presence or absence must be inferred based on visible parts, even if the seatbelt is partially covered. Focus specifically on the visible body areas and use contextual clues (such as body position) to infer whether the seatbelt is worn.
+                            4)加强情景推理和跨帧分析:For each block of video (spanning multiple frames), synthesize information from all frames and audio to create a cohesive understanding of the scene. Ensure continuity across frames and focus on consistent actions (e.g., pulling at the seatbelt, changing body position).
+                            5)加强安全带动作推理: a.如果安全带部分不可见，推测其状态是否处于松动、滑落、未系紧或未系状态。b. 如果检测到儿童的动作（如扯动或拉扯带子），应该推断儿童正在挣脱或准备解开安全带，务必记录完整动作过程。
+                            6)按年龄推断安全带位置：Adjust seatbelt detection based on estimated age or body size of the child. For infants and toddlers, the seatbelt should be positioned lower on the body, typically crossing the chest and avoiding the neck. For older children, the seatbelt may be closer to an adult position, but still lower than the average adult.
+                            7)安全带肩带
+                            7)语义匹配:Make sure to check whether the child **reaches towards the seatbelt**, **tugs on it**, or **moves in a way that suggests adjusting or loosening the belt**. If any such movement is detected, report it as "struggling with seatbelt挣脱安全带".
 
                     Task 3: Children Behavior Monitoring in Cabin - PRIORITY TWO:
                         - Report specific behaviors in **key_actions**,with a strong focus on seat-belt related actions. Pay special attention to behaviors such as unbuckling the seat belt, attempting to escape from the seatbelt, or tampering with it.
@@ -214,6 +188,38 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                                 a) Closed Eyes: Check if the passenger's eyes are closed, as this is a common indicator of sleep.
                                 b) Head Position: Observe the passenger's head posture. If the head is slightly tilted back or in a relaxed position, it may suggest that the person is sleeping.
                                 c) Body Posture: Examine the body posture. If the arms are crossed in front of the chest and the body appears relaxed and motionless, it might indicate the person is asleep.
+                                - Additionally, whenever a child is marked as "Sleeping", include **specific actions** in "key_actions", for example:
+                                 "Child closes eyes, head rests on the seat, arms relax, and body leans backward as they fall asleep." 
+                                 - Ensure every sleeping action is explicitly reported in key_actions
+                                睡眠识别逻辑：
+                                    1.睡眠姿态规则：
+                                    •闭眼：如果检测到儿童的眼睛关闭，判定为可能进入睡眠状态。
+                                    •头部位置：如果头部向后倾斜、靠在椅背上或侧向一边，则可能处于睡眠状态。
+                                    •身体放松：如果检测到儿童的身体姿势相对放松，手臂交叉在胸前或四肢放松，则可能处于睡眠状态。
+                                    •呼吸频率变化：如果能够检测到呼吸节奏变慢（通过胸部或腹部的微小起伏），可以进一步确认睡眠状态。
+                                    2.检测方法：
+                                    •视觉检测：在每帧图像中检测儿童的眼睛是否闭合，头部位置是否偏离正常坐姿，以及身体是否处于放松状态。
+                                    •帧间推理：使用连续帧来检测身体和头部的变化，特别是在长时间保持头部倾斜和闭眼的情况下。通过帧间跟踪判断睡眠姿态的持续性。
+                                    •姿势分析：观察儿童的身体姿态，是否有较大的动作。如果身体几乎不动且姿态持续保持不变，则很有可能正在进入睡眠状态。
+                                    3.视觉提示：
+                                    •闭眼检测：通过视觉分析检测儿童的眼睛是否关闭。如果眼睛长时间关闭，则判定为睡眠。
+                                    •头部和身体姿势：检测头部是否向后倾斜，靠在椅背上，或朝向一侧，结合身体的放松姿态来判断是否进入睡眠。
+                                    •帧间推理：跟踪多个连续帧中的头部和眼睛位置变化，确保头部和眼睛在较长时间内保持相同姿势。如果长时间检测到眼睛闭合和头部倾斜，判定为睡眠状态。
+                                睡眠推理逻辑：
+                                    1加强睡眠推理过程：明确描述推断儿童是否处于睡眠状态的具体过程。例如，通过帧间检测是否有眼睛闭合、头部向后倾斜，以及身体是否处于放松状态。
+                                    2.加强睡眠动作推理细节：不要只简单地标记“睡着了”，而是要报告每个相关的动作。例如：“儿童闭上眼睛，头部靠在椅背上，身体放松，双臂交叉在胸前或自然垂下。”
+                                    3.加强睡眠的背景观察和推理：
+                                    •在每一帧中，检测儿童的眼睛、头部位置和身体姿态，特别是观察这些部位的相对稳定性。如果在多帧中检测到这些部位的变化较小，且动作较慢，判定为儿童正在进入睡眠状态。
+                                    •即使在部分帧中，眼睛或头部位置被遮挡，也应基于可见部分推断睡眠状态。通过连续帧分析来补充被遮挡的信息。
+                                    4.加强情景推理和跨帧分析：
+                                    对每个视频块（包含多个帧）的信息进行综合分析，结合音频信息（如无言状态或环境音安静）来构建对场景的完整理解。确保对儿童动作的连续性进行追踪，尤其是眼睛闭合、身体姿态放松等状态的保持。
+                                    5.加强睡眠动作推理：
+                                    如果检测到儿童闭上眼睛，头部向后倾斜，或身体放松的动作，应明确描述这一过程。例如：“儿童在椅子上逐渐放松，闭上了眼睛，头部靠在椅背上，双臂自然下垂。”
+                                    6.根据年龄推断睡眠状态：
+                                    根据儿童的年龄或体型，推断睡眠姿态。例如，幼儿在睡觉时可能会蜷缩在座椅上，头部自然下垂或侧倾；而年长的孩子可能会以更标准的姿态坐着，头部靠在椅背上。
+                                    7.语义匹配：
+                                    检查是否检测到儿童“闭眼”、“头部靠在椅背上”或“身体放松”的动作。如果检测到这些动作，应报告为“儿童处于睡眠状态”，并在 key_actions 中详细描述。
+                                 
                             2.If you find any child singing, you should report children singing in key_actions.
                             3.If you find any child eating something, you should report children eating in key_actions.
                                 a) Hand-to-Mouth Movement: Watch for the child bringing food or utensils to their mouth. If the hand is positioned near the mouth, and the child is chewing or swallowing, it indicates eating, NOT TO BE CONFUSED WITH TOYS.
@@ -316,12 +322,12 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                     "scene_theme": "日常",
                     "characters": [
                         {{
-                            "is_child": "是",
+                            "is_child": "幼儿",
                             "number_of_children": "2",
                             "current_child": "1",
                             "gender": "未知",
                             "location": "后排左侧-可以看到一个人（可能是儿童）的头部，从前排座椅后面露出(不要因为看不到全部脸部就不算做一个人数!!!!!)",
-                            "wearing_seat_belt": "是",
+                            "wearing_seat_belt": "是"(如果安全带清晰可见在肩膀以上且穿过胸部，则判定安全带系好。如果安全带未穿过肩膀或在胸部下方，则提示未正确佩戴。),
                             "Sleeping": "否",
                             "description": "一个戴着黄色帽子的孩子，坐在后排左侧的儿童座椅上，系着安全带/正在用手解开安全带, 手里拿着白色饮料,正在喝饮料",
                         }}
@@ -339,12 +345,12 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                     Example 2 - Wrong: 只说"手里拿着一个物品"太过模糊,应该说"正在吃零食"或"正在喝饮料"!!!!!
                     "characters": [
                         {{
-                            "is_child": "是",
+                            "is_child": "儿童",
                             ...
                             "description": "一个坐在后排左侧的孩子，穿着绿色的衣服，手里拿着一个物品(错误)。"
                         }},
                         {{
-                            "is_child": "是",
+                            "is_child": "儿童",
                             ...
                             "description": "一个坐在后排右侧的孩子，手里拿着一个物品(错误)。"
                         }}
@@ -452,8 +458,7 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
     packet=[]
     current_interval_start_second = 0
     capture_interval_in_frames = int(fps * frame_interval / frames_per_interval)  # Interval in frames to capture the image
-    spinner = Spinner("Capturing Video and Audio...")
-    spinner.start()
+
 
     packet_count=1
     # Initialize known face encodings and their names if provided
@@ -540,80 +545,72 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
         #if packet len is appropriate (meaning FPI is hit) then process the audio for transcription
         if len(packet) == frames_per_interval or (current_interval_start_second + frame_interval) < current_second:
             current_transcription=""
-            # if video_clip.audio is not None:
-            #     audio_name = f'audio_at_{current_interval_start_second}s.mp3'
-            #     audio_path = os.path.join(output_audio_dir, audio_name)
-            #     audio_clip = video_clip.subclip(current_interval_start_second, min(current_interval_start_second + frame_interval, video_clip.duration))  # Avoid going past the video duration
-            #     audio_clip.audio.write_audiofile(audio_path, codec='mp3', verbose=False, logger=None)
-            #
-            #     headers = {
-            #         'Authorization': f'Bearer {openai_api_key}',
-            #     }
-            #     files = {
-            #         'file': open(audio_path, 'rb'),
-            #         'model': (None, 'whisper-1'),
-            #     }
-            #     spinner.stop()#???
-            #     spinner = Spinner("Transcribing Audio...")#???
-            #     spinner.start()
-            #     # Actual audio transcription occurs in either OpenAI or Azure
-            #     @retry(stop_max_attempt_number=3)
-            #     def transcribe_audio(audio_path, endpoint, api_key, deployment_name):
-            #         url = f"{endpoint}/openai/deployments/{deployment_name}/audio/transcriptions?api-version=2023-09-01-preview"
-            #
-            #         headers = {
-            #             "api-key": api_key,
-            #         }
-            #         json = {
-            #             "file": (audio_path.split("/")[-1], open(audio_path, "rb"), "audio/mp3"),
-            #         }
-            #         data = {
-            #             'response_format': (None, 'verbose_json')
-            #         }
-            #         response = requests.post(url, headers=headers, files=json, data=data)
-            #
-            #         return response
-            #
-            #     if(audio_api_type == "Azure"):
-            #         response = transcribe_audio(audio_path, azure_whisper_endpoint, AZ_WHISPER, azure_whisper_deployment)
-            #     else:
-            #         from openai import OpenAI
-            #         client = OpenAI()
-            #
-            #         audio_file = open(audio_path, "rb")
-            #         response = client.audio.transcriptions.create(
-            #             model="whisper-1",
-            #             file=audio_file,
-            #             response_format="verbose_json",
-            #         )
-            #
-            #     current_transcription = ""
-            #     tscribe = ""
-            #     # Process transcription response
-            #     if(audio_api_type == "Azure"):
-            #         try:
-            #             for item in response.json()["segments"]:
-            #                 tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
-            #         except:
-            #             tscribe += ""
-            #     else:
-            #         for item in response.segments:
-            #             tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
-            #     global_transcript += "\n"
-            #     global_transcript += tscribe
-            #     current_transcription = tscribe
-            # else:
-            #     print("No audio track found in video clip. Skipping audio extraction and transcription.")
-            print("Skipping audio extraction and transcription. Because the whisper's request rate limite...")
-            spinner.stop()#???
-            spinner = Spinner("Processing the "+str(packet_count)+" Frames and Audio with AI...")
-            spinner.start()
+            if video_clip.audio is not None:
+                audio_name = f'audio_at_{current_interval_start_second}s.mp3'
+                audio_path = os.path.join(output_audio_dir, audio_name)
+                audio_clip = video_clip.subclip(current_interval_start_second, min(current_interval_start_second + frame_interval, video_clip.duration))  # Avoid going past the video duration
+                audio_clip.audio.write_audiofile(audio_path, codec='mp3', verbose=False, logger=None)
+
+                headers = {
+                    'Authorization': f'Bearer {openai_api_key}',
+                }
+                files = {
+                    'file': open(audio_path, 'rb'),
+                    'model': (None, 'whisper-1'),
+                }
+
+                # Actual audio transcription occurs in either OpenAI or Azure
+                def transcribe_audio(audio_path, endpoint, api_key, deployment_name):
+                    url = f"{endpoint}/openai/deployments/{deployment_name}/audio/transcriptions?api-version=2023-09-01-preview"
+
+                    headers = {
+                        "api-key": api_key,
+                    }
+                    json = {
+                        "file": (audio_path.split("/")[-1], open(audio_path, "rb"), "audio/mp3"),
+                    }
+                    data = {
+                        'response_format': (None, 'verbose_json')
+                    }
+                    response = requests.post(url, headers=headers, files=json, data=data)
+
+                    return response
+
+                if(audio_api_type == "Azure"):
+                    response = transcribe_audio(audio_path, azure_whisper_endpoint, AZ_WHISPER, azure_whisper_deployment)
+                else:
+                    from openai import OpenAI
+                    client = OpenAI()
+
+                    audio_file = open(audio_path, "rb")
+                    response = client.audio.transcriptions.create(
+                        model="whisper-1",
+                        file=audio_file,
+                        response_format="verbose_json",
+                    )
+
+                current_transcription = ""
+                tscribe = ""
+                # Process transcription response
+                if(audio_api_type == "Azure"):
+                    try:
+                        for item in response.json()["segments"]:
+                            tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
+                    except:
+                        tscribe += ""
+                else:
+                    for item in response.segments:
+                        tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
+                global_transcript += "\n"
+                global_transcript += tscribe
+                current_transcription = tscribe
+            else:
+                print("No audio track found in video clip. Skipping audio extraction and transcription.")
 
             # Analyze frames with GPT-4 vision
             vision_response = gpt4_vision_analysis(packet, openai_api_key, current_summary, current_transcription)
             if(vision_response==-1):
                 packet.clear()  # Clear packet after analysis
-                packet_count += 1
                 current_interval_start_second += frame_interval
                 current_frame += 1
                 current_second = current_frame / fps
@@ -654,8 +651,9 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                 data=json.loads(vault, strict=False) #If strict is False (True is the default), then control characters will be allowed inside strings.Control characters in this context are those with character codes in the 0-31 range, including '\t' (tab), '\n', '\r' and '\0'.
                 if isinstance(data, list):
                     data = data[0]
-
+                
                 final_arr.append(data)
+
                 if not data:
                     print("No data")
                 # for key, value in data:
@@ -666,18 +664,14 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
                 with open('actionSummary.json', 'w', encoding='utf-8') as f:
                 # Write the data to the file in JSON format
                     json.dump(final_arr, f, indent=4, ensure_ascii=False) #ensure_ascii=False to write in Chinese
-                    print(f"Data written to file: {final_arr}") # 调试信息
+                    # print(f"Data written to file: {final_arr}") # 调试信息
 
             except:
                 miss_arr.append(vision_analysis)
                 print("missed")
 
-            spinner.stop()
-            spinner = Spinner("Capturing Video and Audio...")
-            spinner.start()
 
             packet.clear()  # Clear packet after analysis
-            packet_count += 1
             current_interval_start_second += frame_interval  # Move to the next set of frames
 
         if current_second > video_duration:
@@ -702,31 +696,229 @@ def AnalyzeVideo(vp,fi,fpi,face_rec=False):
         f.write(global_transcript)
     return final_arr
 
-    #print("\n\n\n"+totalData)
+# Paths for video and frame storage
+UPLOAD_FOLDER = "uploaded_videos"
+FRAME_FOLDER = "extracted_frames"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+os.makedirs(FRAME_FOLDER, exist_ok=True)
 
-#AnalyzeVideo("./medal.mp4",60,10)
-# AnalyzeVideo("test_video/car-driving.mov",6,10,False)
-# AnalyzeVideo("2024.9.1_2/瞌睡.mp4",5,10,False)
-# AnalyzeVideo("2024.9.1/儿童低头睡觉.mp4",5,10,False)
-AnalyzeVideo("/mnt/d/BT/DATA/V/liz/2024.9.1/儿童身体伸出窗外（已伸出）.mp4",5,5,False)
-# 儿童车内脱衣服
-# 毯子被扯掉
-# 儿童半跪
-# 安全带解开-从坐下到躺下
-# 儿童低头睡觉
-# 儿童挣脱安全带
-# 儿童头伸向窗-未出去
-# print(miss_arr)
-# if __name__ == "__main__": 
-     
+ANALYSIS_JSON_PATH = "actionSummary.json"
+video_path = ""
 
-#     data=sys.argv[1].split(",")
-#     print(data)
-#     video_path = data[0] 
-#     frame_interval = data[1]
-#     frames_per_interval = data[2]  
-#     face_rec=False
-#     if(len(data)>3):
-#         face_rec=True
-  
-#     AnalyzeVideo(video_path, int(frame_interval), int(frames_per_interval),face_rec) 
+# 定义风险关键字
+medium_risk_keywords = [
+    "头部靠着车窗","头部靠着车门", "手把着车门把手", "手搭车门上", "手伸出窗外"]
+medium_risk_keywords_seatbelt = ["解开安全带","没有系","未系","没系"]
+high_risk_keywords = [
+    "头伸出窗外", "头探出窗外", "身体伸出窗外","身体探出窗外", "身体向车外探出","探出身体到车外"
+]
+# 根据风险等级设置颜色
+from fuzzywuzzy import fuzz
+# 使用fuzzywuzzy进行模糊匹配, 检测关键字
+def fuzzy_match_keywords(text, keywords, threshold=90):
+    for keyword in keywords:
+        similarity = fuzz.partial_ratio(text, keyword)
+        if similarity >= threshold:
+            print(f"关键字匹配：{text} -> {keyword} ({similarity}%)")
+            return True  # 如果相似度高于阈值，视为匹配
+    return False
+
+# 根据关键字检测风险等级(模糊匹配)
+def detect_risk_level(summary, key_actions, characters):
+    risk_level = "低"  # 默认风险等级为低
+    unbuckled_seatbelt_positions = ""  # 用于保存未系安全带的位置
+    risk_actions_list = []  # 用于保存中高风险行为
+
+    # 遍历所有乘客，检查每个乘客的安全带状态
+    for character in characters:
+        seatbelt_status = '未系' if character.get('wearing_seat_belt') == '否' or character.get('wearing_seat_belt') == '未知' else '是'
+        location = character.get('location', '未知')
+
+        # 如果位置是 "车外"，忽略安全带状态
+        if "车外" in location:
+            continue  # 忽略此乘客，不检测安全带状态
+
+        if seatbelt_status == '未系' or fuzzy_match_keywords(seatbelt_status, medium_risk_keywords_seatbelt):
+            seatbelt_unwearing = "安全带被解开"
+            unbuckled_seatbelt_positions += (f"{location}{seatbelt_unwearing}") if not unbuckled_seatbelt_positions else (f"，{location}{seatbelt_unwearing}")
+            risk_level = "中"
+
+    # 检测中风险
+    if fuzzy_match_keywords(summary, medium_risk_keywords) or fuzzy_match_keywords(key_actions, medium_risk_keywords):
+        risk_level = "中"
+        risk_actions_list.append(f"中风险行为: {location}{key_actions}")
+    # 检测中风险-安全带
+    if seatbelt_status == '是' and fuzzy_match_keywords(summary, medium_risk_keywords_seatbelt) or fuzzy_match_keywords(key_actions, medium_risk_keywords_seatbelt):
+        risk_level = "中"
+        seatbelt_unwearing = "安全带被解开"
+
+    # 检测高风险
+    if fuzzy_match_keywords(summary, high_risk_keywords) or fuzzy_match_keywords(key_actions, high_risk_keywords):
+        risk_level = "高"
+        risk_actions_list.append(f"高风险行为: {location}{key_actions}")
+
+    return risk_level, unbuckled_seatbelt_positions, risk_actions_list
+
+def set_risk_level_color(risk_level):
+    if risk_level == "中":
+        return "<span style='color: orange; font-size: 18px;'>风险等级：中</span>"
+    elif risk_level == "高":
+        return "<span style='color: red; font-size: 18px;'>风险等级：高</span>"
+    else:
+        return "<span style='color: green; font-size: 18px;'>风险等级：低</span>"
+
+# 动态更新常显信息的函数，持续读取 JSON 文件内容
+def update_child_info():
+    default_info = """
+        <h2><b>是否为儿童: 幼儿、儿童</b></h2><br>
+        <h3>儿童信息展示：</h3><br>
+        <p style="font-size: 18px;">• 幼儿1: 位置，性别，安全带状态<br>
+        • 幼儿2: 位置，性别，安全带状态<br>
+        • 幼儿3: 位置，性别，安全带状态<br><br>
+        <b>风险信息：</b><br>
+        <span style="font-size: 20px; color: red;">! 风险等级：-</span>
+        </p>
+    """
+    
+    last_data = default_info  # **初始化为默认值**
+    
+    while True:
+        if os.path.exists(ANALYSIS_JSON_PATH):
+            with open(ANALYSIS_JSON_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # print(time.time(), data)
+            characters = data[-1].get("characters", [])
+            is_child = characters[0].get("is_child", "未知")
+            summary = data[-1].get("summary", "")
+            key_actions = data[-1].get("key_actions", "")
+            
+            if not characters:
+                yield last_data  # **保持上一次的内容**
+            else:
+                child_info = f"""
+                <h2><b>是否为儿童:</b> {is_child}</h2><br>
+                <h3>儿童信息展示：</h3><ul style='font-size: 18px;'>
+                """
+                
+                for index, character in enumerate(characters):
+                    location = character.get('location', '未知')
+                    gender = character.get('gender', '未知')
+                    seatbelt_status = '已系' if character.get('wearing_seat_belt') == '是' else '未系'
+                    # 拼接信息
+                    child_info += f"<li><b>{is_child}{index + 1}：位置: {location}，性别:{gender}，安全带: {seatbelt_status}</b></li>"
+                
+                child_info += "</ul>"
+                
+                # 根据 summary 和 key_actions 判断风险等级
+                risk_level, unbuckled_seatbelt_positions, risk_actions_list = detect_risk_level(summary, key_actions, characters)
+                print(risk_level)
+
+                # 检查 unbuckled_seatbelt_positions 是否为空
+                if unbuckled_seatbelt_positions:
+                    combined_actions = unbuckled_seatbelt_positions
+                else:
+                    combined_actions = ''
+
+                # 检查 key_actions_list 是否为空
+                if risk_actions_list:
+                    if combined_actions:  # 如果 combined_actions 不为空，则用 ', ' 连接
+                        combined_actions += ', ' + ', '.join(risk_actions_list)
+                    else:
+                        combined_actions = ', '.join(risk_actions_list)
+
+                # print(combined_actions)
+
+                # 添加风险信息
+                risk_warning = f"<span style='font-size: 18px; white-space: nowrap;'>危险动作: {combined_actions}<br>{set_risk_level_color(risk_level)}"
+                last_data = f"{child_info}<br>{risk_warning}"  # **更新上一次的内容**
+                
+                yield last_data  # **更新新的显示内容**
+        else:
+            yield last_data  # **保持默认值或上一次的内容**
+        
+        print(video_path)
+        time.sleep(2)  # **每 2 秒更新一次**
+
+# Function to handle video upload, process it, and update the analysis
+def handle_video_upload(file_path):
+    if not file_path:  # 如果没有文件上传，则返回提示
+        return "没有上传任何文件"
+    
+    global video_path
+    video_path = file_path
+    # 保存视频文件
+    video_path = os.path.join(UPLOAD_FOLDER, os.path.basename(file_path))
+    with open(file_path, "rb") as src, open(video_path, "wb") as dst:
+        dst.write(src.read())
+    
+    # 调用 AnalyzeVideo 对视频进行分析
+    threading.Thread(target=AnalyzeVideo, args=(video_path, 5, 5)).start()  # 启动视频分析的线程
+    
+    # 返回视频上传后的提示信息
+    return video_path, "视频上传成功，正在处理..."
+
+# 函数用于加载 actionSummary.json 中的当前分析信息
+def load_analysis():
+    last_data = None  # 初始化 last_data 为空
+    while True:
+        if os.path.exists(ANALYSIS_JSON_PATH):
+            with open(ANALYSIS_JSON_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+                # 假设读取最后一段的分析结果
+                latest_action = data[-1]  # 读取最新的时间戳数据
+                summary = latest_action.get("summary", "暂无摘要")
+                key_actions = latest_action.get("key_actions", "暂无关键动作")
+                prediction = latest_action.get("prediction", "暂无预测")
+                
+                # 组合成 action_info
+                action_info = f"""
+                <b>摘要:</b> {summary} <br>
+                <b>关键动作:</b> {key_actions} <br>
+                <b>预测:</b> {prediction} <br>
+                """
+                
+                # 仅在新的数据时更新
+                if action_info != last_data:
+                    last_data = action_info
+                    yield action_info  # 返回最新的分析结果
+
+        else:
+            yield "<b>当前没有可用的分析结果。</b>"
+
+        time.sleep(2)  # 每 2 秒检查一次文件更新
+
+
+# Gradio UI Layout
+with gr.Blocks() as demo:
+    with gr.Row():
+        # 左侧 - 实时视频流
+        with gr.Column(scale=1):  # 设置左侧列比例
+            gr.Markdown("## 实时舱内视频流")  # Real-time in-cabin video stream
+            
+            # 调整上传按钮宽度，使其和视频宽度一致
+            upload_btn = gr.File(label="上传视频", file_types=["video"])
+            video_output = gr.Video(label="视频输出", format="mp4", height=450, width=730)  # 设置视频输出的宽度
+            
+            video_message = gr.HTML(label="上传状态")  # 视频上传状态提示
+            upload_btn.upload(handle_video_upload, inputs=upload_btn, outputs=[video_output, video_message])
+
+        # 右侧 - 儿童安全信息
+        with gr.Column(scale=1):  # 右侧列比例
+            gr.Markdown("## 常显信息")  # Permanent information section
+            child_info_output = gr.HTML(label="Child Info Output")
+            demo.load(update_child_info, inputs=None, outputs=child_info_output)
+
+            # 添加占位框
+            placeholder = gr.HTML("<div style='border: 2px solid red; width: 100%; height: 300px; text-align:center; line-height:300px;'>车内信息显示</div>", label="占位框")
+
+    with gr.Row():
+        # Bottom section to display only scene analysis results, no child info duplication
+        with gr.Column():
+            gr.Markdown("## Action")
+            analysis_output = gr.HTML(label="Analysis Output")
+            # Simulating the analysis result that doesn't include child info to avoid duplication
+            demo.load(load_analysis, inputs=None, outputs=analysis_output)
+
+    demo.launch()
