@@ -1,3 +1,15 @@
+import logging
+
+lg = logging.getLogger("CBRWEB")
+lg.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+formatter = logging.Formatter("%(asctime)s ][%(name)s][ %(levelname)s )( %(message)s")
+ch.setFormatter(formatter)
+lg.addHandler(ch)
+
+# logging.basicConfig(level=lg.INFO,
+#                format="%(asctime)s ][%(name)s] %(levelname)s )( %(message)s")
+
 import gradio as gr
 import os
 import json
@@ -42,12 +54,14 @@ audio_api_type=os.environ["AUDIO_API_TYPE"]
 final_arr = []
 miss_arr=[]
 
+ANALYSIS_JSON_PATH = "actionSummary.json"
+
 def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
 # Constants
     video_path = vp  # Replace with your video path
     output_frame_dir = 'frames'
     output_audio_dir = 'audio'
-    global_transcript=""
+    # global_transcript=""  #@# comment because whiper only support 3 rpm
     transcriptions_dir = 'transcriptions'
     frame_interval = fi  # Chunk video evenly into segments by a certain interval, unit: seconds 
     frames_per_interval = fpi # Number of frames to capture per interval, unit: frames
@@ -70,11 +84,11 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
             "api-key": api_key
         }
 
-        print(f"resource_name: {resource_name}")
-        print(f"Sending POST request to {url}")
-        print(f"Headers: {headers}")
-        # print(f"Data: {json.dumps(data)}")
-        print(f"api_key: {api_key}")
+        lg.debug(f"resource_name: {resource_name}")
+        lg.info(f"Sending POST request to {url}")
+        lg.debug(f"Headers: {headers}")
+        # lg.debug(f"Data: {json.dumps(data)}")
+        lg.debug(f"api_key: {api_key}")
         response = requests.post(url, headers=headers, data=json.dumps(data))
         return response
     # GPT-4 vision analysis function
@@ -112,7 +126,7 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
         json.dumps({"Start_Timestamp":"16s","sentiment":"Positive, Negative, or Neutral","End_Timestamp":"120s","scene_theme":"Emotional, Heartfelt","characters":"Man in hat, woman in jacket","summary":"Summary of what is occuring around this timestamp with actions included, uses both transcript and frames to create full picture, detailed and attentive, be serious and straightforward in your description.","actions":"Actions extracted via frame analysis","key_objects":"Any objects in the timerange, include colors along with descriptions. all people should be in this, all people should be in this, with as much detail as possible extracted from the frame (clothing,colors,age). Be incredibly detailed","key_actions":"only key action labels extracted from actions","prediction":"Prediction of what will happen next, based on the current scene."})])
         
         if(vision_api_type=="Azure"):
-            print("sending request to gpt-4o")
+            lg.debug("sending request to gpt-4o")
             payload2 = {
                 "messages": [
                     {
@@ -407,7 +421,7 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
 
             }
             response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
-        print(response.json())
+        lg.info(f"The RSP is: \n {str(response.json())}")
         if(response.status_code!=200):
             return -1
         else:
@@ -484,7 +498,7 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
         current_second = current_frame / fps
 
         if current_frame % capture_interval_in_frames == 0 and current_frame != 0:
-            print(f"BEEP {current_frame}")
+            lg.info(f"BEEP {current_frame}")
             # Extract and save frame
             # Save frame at the exact intervals
             if(face_rec==True):
@@ -538,75 +552,75 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
                 cv2.imwrite(frame_path, frame)
             else:
                 frame_name = f'frame_at_{current_second}s.jpg'
-                print("frame_name: ",frame_name, ", current_frame: ", current_frame, ", current_second: ", current_second)
+                lg.info(f"WRITE frame_name: {frame_name}, current_frame: {current_frame}, current_second: {current_second}")
                 frame_path = os.path.join(output_frame_dir, frame_name)
                 cv2.imwrite(frame_path, frame)
             packet.append(frame_path)
         #if packet len is appropriate (meaning FPI is hit) then process the audio for transcription
         if len(packet) == frames_per_interval or (current_interval_start_second + frame_interval) < current_second:
             current_transcription=""
-            if video_clip.audio is not None:
-                audio_name = f'audio_at_{current_interval_start_second}s.mp3'
-                audio_path = os.path.join(output_audio_dir, audio_name)
-                audio_clip = video_clip.subclip(current_interval_start_second, min(current_interval_start_second + frame_interval, video_clip.duration))  # Avoid going past the video duration
-                audio_clip.audio.write_audiofile(audio_path, codec='mp3', verbose=False, logger=None)
+            # if video_clip.audio is not None:
+            #     audio_name = f'audio_at_{current_interval_start_second}s.mp3'
+            #     audio_path = os.path.join(output_audio_dir, audio_name)
+            #     audio_clip = video_clip.subclip(current_interval_start_second, min(current_interval_start_second + frame_interval, video_clip.duration))  # Avoid going past the video duration
+            #     audio_clip.audio.write_audiofile(audio_path, codec='mp3', verbose=False, logger=None)
 
-                headers = {
-                    'Authorization': f'Bearer {openai_api_key}',
-                }
-                files = {
-                    'file': open(audio_path, 'rb'),
-                    'model': (None, 'whisper-1'),
-                }
+            #     headers = {
+            #         'Authorization': f'Bearer {openai_api_key}',
+            #     }
+            #     files = {
+            #         'file': open(audio_path, 'rb'),
+            #         'model': (None, 'whisper-1'),
+            #     }
 
-                # Actual audio transcription occurs in either OpenAI or Azure
-                def transcribe_audio(audio_path, endpoint, api_key, deployment_name):
-                    url = f"{endpoint}/openai/deployments/{deployment_name}/audio/transcriptions?api-version=2023-09-01-preview"
+            #     # Actual audio transcription occurs in either OpenAI or Azure
+            #     def transcribe_audio(audio_path, endpoint, api_key, deployment_name):
+            #         url = f"{endpoint}/openai/deployments/{deployment_name}/audio/transcriptions?api-version=2023-09-01-preview"
 
-                    headers = {
-                        "api-key": api_key,
-                    }
-                    json = {
-                        "file": (audio_path.split("/")[-1], open(audio_path, "rb"), "audio/mp3"),
-                    }
-                    data = {
-                        'response_format': (None, 'verbose_json')
-                    }
-                    response = requests.post(url, headers=headers, files=json, data=data)
+            #         headers = {
+            #             "api-key": api_key,
+            #         }
+            #         json = {
+            #             "file": (audio_path.split("/")[-1], open(audio_path, "rb"), "audio/mp3"),
+            #         }
+            #         data = {
+            #             'response_format': (None, 'verbose_json')
+            #         }
+            #         response = requests.post(url, headers=headers, files=json, data=data)
 
-                    return response
+            #         return response
 
-                if(audio_api_type == "Azure"):
-                    response = transcribe_audio(audio_path, azure_whisper_endpoint, AZ_WHISPER, azure_whisper_deployment)
-                else:
-                    from openai import OpenAI
-                    client = OpenAI()
+            #     if(audio_api_type == "Azure"):
+            #         response = transcribe_audio(audio_path, azure_whisper_endpoint, AZ_WHISPER, azure_whisper_deployment)
+            #     else:
+            #         from openai import OpenAI
+            #         client = OpenAI()
 
-                    audio_file = open(audio_path, "rb")
-                    response = client.audio.transcriptions.create(
-                        model="whisper-1",
-                        file=audio_file,
-                        response_format="verbose_json",
-                    )
+            #         audio_file = open(audio_path, "rb")
+            #         response = client.audio.transcriptions.create(
+            #             model="whisper-1",
+            #             file=audio_file,
+            #             response_format="verbose_json",
+            #         )
 
-                current_transcription = ""
-                tscribe = ""
-                # Process transcription response
-                if(audio_api_type == "Azure"):
-                    try:
-                        for item in response.json()["segments"]:
-                            tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
-                    except:
-                        tscribe += ""
-                else:
-                    for item in response.segments:
-                        tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
-                global_transcript += "\n"
-                global_transcript += tscribe
-                current_transcription = tscribe
-            else:
-                print("No audio track found in video clip. Skipping audio extraction and transcription.")
-
+            #     current_transcription = ""
+            #     tscribe = ""
+            #     # Process transcription response
+            #     if(audio_api_type == "Azure"):
+            #         try:
+            #             for item in response.json()["segments"]:
+            #                 tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
+            #         except:
+            #             tscribe += ""
+            #     else:
+            #         for item in response.segments:
+            #             tscribe += str(round(item["start"], 2)) + "s - " + str(round(item["end"], 2)) + "s: " + item["text"] + "\n"
+            #     global_transcript += "\n"
+            #     global_transcript += tscribe
+            #     current_transcription = tscribe
+            # else:
+            #     print("No audio track found in video clip. Skipping audio extraction and transcription.")
+            lg.warning("No audio track found in video clip. Skipping audio extraction and transcription.[WSP]") #@# comment above if else block, cause whisper can only accept 3 req per min
             # Analyze frames with GPT-4 vision
             vision_response = gpt4_vision_analysis(packet, openai_api_key, current_summary, current_transcription)
             if(vision_response==-1):
@@ -619,11 +633,11 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
             try:
                 vision_analysis = vision_response["choices"][0]["message"]["content"]
             except:
-                print(vision_response)
+                lg.error(vision_response)
             try:
                 current_summary = vision_analysis
             except Exception as e:
-                print("bad json",str(e))
+                lg.error("bad json",str(e))
                 current_summary=str(vision_analysis)
             #print(current_summary)
             totalData+="\n"+str(current_summary)
@@ -655,27 +669,27 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
                 final_arr.append(data)
 
                 if not data:
-                    print("No data")
+                    lg.warning("No data")
                 # for key, value in data:
                 #     final_arr.append(item)
                 #     ##socket.emit('actionsummary', {'data': item}, namespace='/test')
                 #     print(f"Key: {key}, Value: {value}")
 
-                with open('actionSummary.json', 'w', encoding='utf-8') as f:
+                with open(ANALYSIS_JSON_PATH, 'w', encoding='utf-8') as f:
                 # Write the data to the file in JSON format
                     json.dump(final_arr, f, indent=4, ensure_ascii=False) #ensure_ascii=False to write in Chinese
                     # print(f"Data written to file: {final_arr}") # 调试信息
 
             except:
                 miss_arr.append(vision_analysis)
-                print("missed")
+                lg.error("missed")
 
 
             packet.clear()  # Clear packet after analysis
             current_interval_start_second += frame_interval  # Move to the next set of frames
 
         if current_second > video_duration:
-            print("Current second is: ", current_second), "Video duration is: ", video_duration, "Exiting loop"            
+            lg.warning("Current second is: ", current_second), "Video duration is: ", video_duration, "Exiting loop"            
             break
 
         current_frame += 1
@@ -686,14 +700,14 @@ def AnalyzeVideo(vp,fi=5,fpi=5,face_rec=False):
     cap.release()
     cv2.destroyAllWindows()
 
-    print('Extraction, analysis, and transcription completed.')
-    with open('actionSummary.json', 'w', encoding='utf-8') as f:
+    lg.info('Extraction, analysis, and transcription completed.')
+    with open(ANALYSIS_JSON_PATH, 'w', encoding='utf-8') as f:
     # Write the data to the file in JSON format
         json.dump(final_arr, f, indent=4, ensure_ascii=False)
         
-    with open('transcript.txt', 'w') as f:
-    # Write the data to the file in JSON format
-        f.write(global_transcript)
+    # with open('transcript.txt', 'w') as f:      #@# comment because whiper only support 3 rpm
+    # # Write the data to the file in JSON format
+    #     f.write(global_transcript)
     return final_arr
 
 # Paths for video and frame storage
@@ -702,7 +716,6 @@ FRAME_FOLDER = "extracted_frames"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(FRAME_FOLDER, exist_ok=True)
 
-ANALYSIS_JSON_PATH = "actionSummary.json"
 video_path = ""
 
 # 定义风险关键字
@@ -719,7 +732,7 @@ def fuzzy_match_keywords(text, keywords, threshold=90):
     for keyword in keywords:
         similarity = fuzz.partial_ratio(text, keyword)
         if similarity >= threshold:
-            print(f"关键字匹配：{text} -> {keyword} ({similarity}%)")
+            lg.debug(f"关键字匹配：{text} -> {keyword} ({similarity}%)")
             return True  # 如果相似度高于阈值，视为匹配
     return False
 
@@ -812,7 +825,7 @@ def update_child_info():
                 
                 # 根据 summary 和 key_actions 判断风险等级
                 risk_level, unbuckled_seatbelt_positions, risk_actions_list = detect_risk_level(summary, key_actions, characters)
-                print(risk_level)
+                lg.debug(risk_level)
 
                 # 检查 unbuckled_seatbelt_positions 是否为空
                 if unbuckled_seatbelt_positions:
@@ -837,7 +850,7 @@ def update_child_info():
         else:
             yield last_data  # **保持默认值或上一次的内容**
         
-        print(video_path)
+        lg.debug(video_path)
         time.sleep(2)  # **每 2 秒更新一次**
 
 # Function to handle video upload, process it, and update the analysis
@@ -851,7 +864,7 @@ def handle_video_upload(file_path):
     video_path = os.path.join(UPLOAD_FOLDER, os.path.basename(file_path))
     with open(file_path, "rb") as src, open(video_path, "wb") as dst:
         dst.write(src.read())
-    
+    lg.info( "视频上传成功，开始处理...")
     # 调用 AnalyzeVideo 对视频进行分析
     threading.Thread(target=AnalyzeVideo, args=(video_path, 5, 5)).start()  # 启动视频分析的线程
     
