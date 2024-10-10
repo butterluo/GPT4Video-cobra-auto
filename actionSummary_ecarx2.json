@@ -1,0 +1,232 @@
+[
+    {
+        "Start_Timestamp": "1.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "3.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个戴着黄色帽子的孩子，坐在后排右侧的儿童座椅上，系着安全带，手里拿着一个玩具。"
+            }
+        ],
+        "summary": "在这段视频中，一个孩子坐在后排右侧的儿童座椅上，戴着黄色的帽子并系着安全带，手里拿着一个玩具。",
+        "actions": "孩子坐在儿童座椅上，戴着黄色的帽子，系着安全带，手里拿着玩具。",
+        "key_objects": "黄色帽子，玩具",
+        "key_actions": "孩子系着安全带，手里拿着玩具",
+        "prediction": "孩子可能会继续玩玩具，保持安静。"
+    },
+    {
+        "Start_Timestamp": "6.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "10.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个戴着黄色帽子的孩子，坐在后排右侧的儿童座椅上，系着安全带，手里抱着一个玩具。"
+            }
+        ],
+        "summary": "在这段视频中，一个幼儿坐在后排右侧的儿童座椅上，戴着黄色的帽子并系着安全带，手里抱着一个玩具。前排座位上有一成年人。",
+        "actions": "孩子坐在儿童座椅上，戴着黄色的帽子，系着安全带，手里抱着玩具。",
+        "key_objects": "黄色帽子，玩具，饮料瓶",
+        "key_actions": "孩子系着安全带，抱着玩具",
+        "prediction": "孩子可能会继续玩玩具，保持安静。"
+    },
+    {
+        "Start_Timestamp": "11.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "16.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个戴着黄色帽子的孩子，坐在后排右侧的儿童座椅上，系着安全带，手里拿着一个粉色的玩具。"
+            }
+        ],
+        "summary": "在这段视频中，一个幼儿坐在后排右侧的儿童座椅上，戴着黄色的帽子并系着安全带，手里拿着一个粉色的玩具。前排座位上有一成年人，车窗外有两个人在交谈。",
+        "actions": "孩子坐在儿童座椅上，戴着黄色的帽子，系着安全带，手里拿着玩具。",
+        "key_objects": "黄色帽子，粉色玩具，饮料瓶",
+        "key_actions": "孩子系着安全带，手里拿着玩具",
+        "prediction": "孩子可能会继续玩玩具，保持安静。"
+    },
+    {
+        "Start_Timestamp": "16.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "20.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个戴着黄色帽子的孩子，坐在后排右侧的儿童座椅上，系着安全带，手里拿着一个白色的物品，可能在吃东西。"
+            }
+        ],
+        "summary": "在这段视频中，一个幼儿坐在后排右侧的儿童座椅上，戴着黄色的帽子并系着安全带。孩子手里拿着一个白色的物品，可能在吃东西。前排座位上有一成年人。",
+        "actions": "孩子坐在儿童座椅上，戴着黄色的帽子，系着安全带，手里拿着物品可能在吃东西。",
+        "key_objects": "黄色帽子，白色物品，饮料瓶",
+        "key_actions": "孩子系着安全带，手里拿着物品可能在吃东西",
+        "prediction": "孩子可能会继续吃东西，保持安静。"
+    },
+    {
+        "Start_Timestamp": "21.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "25.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个戴着黄色帽子的孩子，坐在后排右侧的儿童座椅上，系着安全带，手里拿着一个粉色的玩具。"
+            }
+        ],
+        "summary": "在这段视频中，一个孩子坐在后排右侧的儿童座椅上，戴着黄色的帽子并系着安全带，手里拿着一个粉色的玩具。前排座位上有一成年人，车外有两个人在交谈。",
+        "actions": "孩子坐在儿童座椅上，手里拿着玩具，成年人坐在前排座位上，车外有人交谈。",
+        "key_objects": "孩子戴着黄色帽子，手里拿着粉色玩具，车内有一瓶黄色饮料。",
+        "key_actions": "孩子坐在儿童座椅上，手里拿着玩具。",
+        "prediction": "孩子可能会继续玩玩具，保持安静。"
+    },
+    {
+        "Start_Timestamp": "26.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "30.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个戴着黄色帽子的孩子，坐在后排右侧的儿童座椅上，系着安全带，手里拿着一个粉色的玩具。"
+            }
+        ],
+        "summary": "在这段视频中，一个幼儿坐在后排右侧的儿童座椅上，戴着黄色的帽子并系着安全带，手里拿着一个粉色的玩具。前排座位上有一成年人，车窗外有一人站立。",
+        "actions": "孩子坐在儿童座椅上，戴着黄色的帽子，系着安全带，手里拿着玩具。",
+        "key_objects": "黄色帽子，粉色玩具，饮料瓶",
+        "key_actions": "孩子系着安全带，手里拿着玩具",
+        "prediction": "孩子可能会继续玩玩具，保持安静。"
+    },
+    {
+        "Start_Timestamp": "31.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "35.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个坐在后排右侧的幼儿，戴着黄色帽子，系着安全带，手里拿着一个粉色玩具。"
+            }
+        ],
+        "summary": "在这段视频中，一个幼儿坐在后排右侧，戴着黄色帽子并系着安全带。孩子手里拿着一个粉色玩具，似乎在玩耍。",
+        "actions": "幼儿坐在后排右侧，戴着黄色帽子，系着安全带，手里拿着玩具。",
+        "key_objects": "幼儿，黄色帽子，粉色玩具，安全带",
+        "key_actions": "幼儿玩耍",
+        "prediction": "孩子可能会继续玩耍，保持安全带系好状态。"
+    },
+    {
+        "Start_Timestamp": "36.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "40.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个坐在后排右侧的幼儿，穿着白色衣服，系着安全带，手里拿着一个粉色的玩具。"
+            }
+        ],
+        "summary": "在这段视频中，一个幼儿坐在后排右侧，系着安全带，手里拿着一个粉色的玩具。前排座位上有一成年人。",
+        "actions": "幼儿坐在后排右侧，系着安全带，手里拿着玩具。",
+        "key_objects": "粉色玩具，黄色饮料瓶",
+        "key_actions": "幼儿系着安全带，手里拿着玩具",
+        "prediction": "幼儿可能会继续玩玩具，保持安静。"
+    },
+    {
+        "Start_Timestamp": "41.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "45.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个坐在后排右侧的幼儿，穿着白色衣服，系着安全带，手里没有物品。"
+            }
+        ],
+        "summary": "在这段视频中，幼儿坐在后排右侧，系着安全带。孩子在座位上活动，偶尔低头看向座位前方。",
+        "actions": "幼儿坐在后排右侧，系着安全带，偶尔低头看向座位前方。",
+        "key_objects": "幼儿穿着白色衣服，座位上有一个粉色的毛绒玩具。",
+        "key_actions": "幼儿系着安全带，低头看向座位前方。",
+        "prediction": "孩子可能会继续在座位上活动，但由于系着安全带，安全性较高。"
+    },
+    {
+        "Start_Timestamp": "46.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "50.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "幼儿",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "否",
+                "Sleeping": "否",
+                "description": "一个坐在后排右侧的幼儿，穿着白色衣服，手里拿着一个玩具，未系安全带。"
+            }
+        ],
+        "summary": "在这段视频中，一个幼儿坐在后排右侧，手里拿着玩具，未系安全带。孩子在座位上移动，似乎在玩耍。",
+        "actions": "幼儿在后排右侧座位上移动，手里拿着玩具，未系安全带。",
+        "key_objects": "幼儿，白色衣服，玩具",
+        "key_actions": "未系安全带",
+        "prediction": "由于未系安全带，孩子可能会在车内移动时失去平衡，建议系好安全带以确保安全。"
+    }
+]

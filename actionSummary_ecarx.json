@@ -1,0 +1,170 @@
+[
+    {
+        "Start_Timestamp": "1.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "3.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "儿童",
+                "number_of_children": "2",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排左侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个穿绿色衣服的孩子，坐在后排左侧，系着安全带。"
+            },
+            {
+                "is_child": "儿童",
+                "number_of_children": "2",
+                "current_child": "2",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "是",
+                "Sleeping": "否",
+                "description": "一个穿蓝色衣服的孩子，坐在后排右侧，系着安全带。"
+            }
+        ],
+        "summary": "两个孩子坐在后排，系着安全带，安静地坐着。",
+        "actions": "孩子们坐在后排座位上，系着安全带。",
+        "key_objects": "两个孩子分别穿着绿色和蓝色的衣服，坐在后排座位上。",
+        "key_actions": "孩子们系着安全带",
+        "prediction": "孩子们可能会继续保持安静，安全带状态良好。"
+    },
+    {
+        "Start_Timestamp": "6.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "10.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "儿童",
+                "number_of_children": "2",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排左侧",
+                "wearing_seat_belt": "否",
+                "Sleeping": "否",
+                "description": "一个坐在后排左侧的孩子，穿着绿色的衣服，未系安全带，身体向右倾斜。"
+            },
+            {
+                "is_child": "儿童",
+                "number_of_children": "2",
+                "current_child": "2",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "否",
+                "Sleeping": "否",
+                "description": "一个坐在后排右侧的孩子，穿着蓝色的衣服，未系安全带，身体向左倾斜。"
+            }
+        ],
+        "summary": "在这段视频中，两个孩子坐在后排座位上，均未系安全带。左侧的孩子身体向右倾斜，而右侧的孩子身体向左倾斜。前排座位上有一成年人。",
+        "actions": "两个孩子坐在后排座位上，未系安全带，身体倾斜。",
+        "key_objects": "前排座位上有一个成年人，后排左侧的孩子穿着绿色的衣服，后排右侧的孩子穿着蓝色的衣服。",
+        "key_actions": "未系安全带",
+        "prediction": "由于两个孩子均未系安全带，可能会在车辆行驶过程中出现危险行为，如身体倾斜或移动。建议立即系好安全带以确保安全。"
+    },
+    {
+        "Start_Timestamp": "11.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "16.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "否",
+                "number_of_children": "0",
+                "current_child": "0",
+                "gender": "未知",
+                "location": "前排",
+                "wearing_seat_belt": "未知",
+                "Sleeping": "否",
+                "description": "前排座位上有一名成年人，穿着灰色T恤，正在调整耳朵附近的物品。"
+            }
+        ],
+        "summary": "在这段视频中，前排座位上的成年人正在调整耳朵附近的物品，车外有一只手伸进车内，似乎在与车内的人互动。",
+        "actions": "成年人调整耳朵附近的物品，车外有人伸手进车内。",
+        "key_objects": "车内有一个黄色瓶子放在前排座位之间的控制台上。",
+        "key_actions": "成年人调整耳朵附近的物品，车外有人伸手进车内。",
+        "prediction": "车外的人可能会继续与车内的人互动，可能会有进一步的交流或物品传递。"
+    },
+    {
+        "Start_Timestamp": "16.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "20.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "否",
+                "number_of_children": "0",
+                "current_child": "0",
+                "gender": "未知",
+                "location": "前排乘客座位",
+                "wearing_seat_belt": "否",
+                "Sleeping": "否",
+                "description": "一个穿着灰色T恤的成年人，坐在前排乘客座位上，未系安全带。"
+            }
+        ],
+        "summary": "在这段视频中，一名成年人坐在前排乘客座位上，未系安全带。车内环境安静，后排座位空无一人。",
+        "actions": "成年人坐在前排乘客座位上，未系安全带。",
+        "key_objects": "车内有一个放在中央扶手上的黄色饮料瓶。",
+        "key_actions": "未系安全带",
+        "prediction": "由于未系安全带，可能存在安全隐患，建议系好安全带以确保安全。"
+    },
+    {
+        "Start_Timestamp": "21.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "25.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "否",
+                "number_of_children": "0",
+                "current_child": "0",
+                "gender": "未知",
+                "location": "前排",
+                "wearing_seat_belt": "未知",
+                "Sleeping": "否",
+                "description": "前排座位上有一名成年人，穿着灰色T恤，正在看向车外。"
+            }
+        ],
+        "summary": "在这段视频中，前排座位上的成年人正在看向车外，车内环境安静，后排座位空无一人。",
+        "actions": "成年人坐在前排座位上，转头看向车外。",
+        "key_objects": "车内有一个黄色瓶子放在前排座位中间的扶手上。",
+        "key_actions": "成年人转头看向车外",
+        "prediction": "成年人可能会继续与车外的人交流或准备下车。"
+    },
+    {
+        "Start_Timestamp": "26.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "30.0s",
+        "scene_theme": "日常",
+        "characters": [
+            {
+                "is_child": "儿童",
+                "number_of_children": "2",
+                "current_child": "1",
+                "gender": "未知",
+                "location": "后排左侧",
+                "wearing_seat_belt": "否",
+                "Sleeping": "否",
+                "description": "一个坐在后排左侧的孩子，穿着浅色衣服，正在车内活动。"
+            },
+            {
+                "is_child": "儿童",
+                "number_of_children": "2",
+                "current_child": "2",
+                "gender": "未知",
+                "location": "后排右侧",
+                "wearing_seat_belt": "否",
+                "Sleeping": "否",
+                "description": "一个坐在后排右侧的孩子，穿着浅色衣服，正在车内活动。"
+            }
+        ],
+        "summary": "在这段视频中，两个孩子坐在后排座位上，未系安全带，正在车内活动。前排座位上有一成年人。",
+        "actions": "孩子们在后排座位上活动，未系安全带。",
+        "key_objects": "两个孩子穿着浅色衣服，后排座位上有一个饮料瓶。",
+        "key_actions": "孩子们未系安全带，正在车内活动。",
+        "prediction": "由于孩子们未系安全带，可能会在车内移动时失去平衡，建议系好安全带以确保安全。"
+    }
+]
