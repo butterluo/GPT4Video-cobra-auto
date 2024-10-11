@@ -1,0 +1,150 @@
+[
+    {
+        "Start_Timestamp": "1.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "3.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Child",
+                "number_of_children": "2",
+                "current_child": "1",
+                "gender": "Male",
+                "location": "Rear left",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "A boy wearing a green shirt, sitting in the rear left seat with a seatbelt fastened."
+            },
+            {
+                "is_child": "Child",
+                "number_of_children": "2",
+                "current_child": "2",
+                "gender": "Male",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "A boy wearing a light blue shirt, sitting in the rear right seat with a seatbelt fastened."
+            }
+        ],
+        "summary": "Two boys are seated in the rear of the car, both wearing seatbelts. They appear to be sitting calmly.",
+        "actions": "Both children are seated and wearing seatbelts.",
+        "key_objects": "Two boys, one in a green shirt and one in a light blue shirt, both seated in the rear with seatbelts.",
+        "key_actions": "Children seated with seatbelts fastened.",
+        "prediction": "The children are securely fastened and appear calm, no immediate risk of unbuckling."
+    },
+    {
+        "Start_Timestamp": "6.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "10.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Child",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "No",
+                "Sleeping": "No",
+                "description": "A child in the rear right seat, leaning towards the window, not wearing a seatbelt."
+            }
+        ],
+        "summary": "In this scene, a child is seated in the rear right of the vehicle, leaning towards the window. The child is not wearing a seatbelt, which poses a safety risk.",
+        "actions": "The child is leaning towards the window without a seatbelt.",
+        "key_objects": "Child in the rear right seat, wearing a light-colored shirt.",
+        "key_actions": "Child leaning towards the window, not wearing a seatbelt.",
+        "prediction": "The child may continue to lean towards the window, increasing the risk of unsafe behavior. It is important to ensure the child wears a seatbelt."
+    },
+    {
+        "Start_Timestamp": "11.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "16.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "No",
+                "number_of_children": "0",
+                "current_child": "0",
+                "gender": "Male",
+                "location": "Front passenger seat",
+                "wearing_seat_belt": "No",
+                "Sleeping": "No",
+                "description": "An adult male in a gray shirt sitting in the front passenger seat, not wearing a seatbelt."
+            }
+        ],
+        "summary": "In this scene, an adult male is seated in the front passenger seat without a seatbelt. The rear seats are empty, and there is a bottle placed in the center console. The car door is open, and a person outside is interacting with the passenger, possibly handing something over or communicating.",
+        "actions": "The adult male is seated without a seatbelt, and there is interaction with a person outside the car.",
+        "key_objects": "A bottle with a yellow cap on the center console, a camera mounted on the console.",
+        "key_actions": "Seated without a seatbelt, interaction with a person outside the car.",
+        "prediction": "The person outside may continue to interact with the passenger, possibly handing over an item or engaging in conversation. The passenger should be reminded to wear a seatbelt for safety."
+    },
+    {
+        "Start_Timestamp": "16.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "20.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "No",
+                "number_of_children": "0",
+                "current_child": "0",
+                "gender": "Male",
+                "location": "Front passenger seat",
+                "wearing_seat_belt": "No",
+                "Sleeping": "No",
+                "description": "An adult male wearing a grey T-shirt, sitting in the front passenger seat without a seatbelt."
+            }
+        ],
+        "summary": "An adult male is seated in the front passenger seat without a seatbelt. The car door is open, and another person is visible outside the vehicle, possibly interacting with the passenger.",
+        "actions": "The passenger is seated without a seatbelt, and the car door is open with interaction from outside.",
+        "key_objects": "Grey T-shirt, open car door, bottle with yellow cap on the center console.",
+        "key_actions": "Passenger seated without seatbelt, car door open.",
+        "prediction": "The passenger may exit the vehicle or continue interacting with the person outside. Ensure the seatbelt is fastened if the vehicle is in motion."
+    },
+    {
+        "Start_Timestamp": "21.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "25.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "No",
+                "number_of_children": "0",
+                "current_child": "0",
+                "gender": "Male",
+                "location": "Front passenger seat",
+                "wearing_seat_belt": "No",
+                "Sleeping": "No",
+                "description": "An adult male wearing a grey T-shirt, sitting in the front passenger seat without a seatbelt."
+            }
+        ],
+        "summary": "An adult male is seated in the front passenger seat without a seatbelt. The car appears to be stationary, with the door open and another person visible outside the vehicle.",
+        "actions": "The adult male is seated without a seatbelt, and the car door is open.",
+        "key_objects": "A bottle with a yellow cap is placed on the center console.",
+        "key_actions": "Seated without a seatbelt, car door open",
+        "prediction": "The adult may remain seated without fastening the seatbelt, which could be unsafe if the vehicle starts moving."
+    },
+    {
+        "Start_Timestamp": "26.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "30.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Child",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear left",
+                "wearing_seat_belt": "No",
+                "Sleeping": "No",
+                "description": "A child in a light blue outfit, moving towards the rear left seat, not wearing a seatbelt."
+            }
+        ],
+        "summary": "A child is seen moving towards the rear left seat of the car. The child is not wearing a seatbelt and appears to be in motion, possibly entering or exiting the vehicle.",
+        "actions": "The child is moving towards the rear left seat, not wearing a seatbelt.",
+        "key_objects": "Child in light blue outfit, rear left seat.",
+        "key_actions": "Child moving towards the rear left seat, not wearing a seatbelt.",
+        "prediction": "The child may continue to move around the vehicle without securing the seatbelt, which could be unsafe if the vehicle starts moving."
+    }
+]

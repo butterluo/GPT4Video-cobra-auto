@@ -1,0 +1,232 @@
+[
+    {
+        "Start_Timestamp": "1.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "3.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Infant",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "An infant wearing a yellow hat, seated in a child seat on the rear right, with a seatbelt fastened."
+            }
+        ],
+        "summary": "An infant is seated in a child seat on the rear right, wearing a yellow hat and fastened with a seatbelt. The child appears to be awake and is holding a soft toy.",
+        "actions": "The infant is sitting in the child seat, holding a soft toy.",
+        "key_objects": "Infant in a yellow hat, soft toy, child seat, seatbelt.",
+        "key_actions": "Infant holding a soft toy.",
+        "prediction": "The infant is securely fastened and appears content. No immediate risk of unbuckling or unsafe behavior."
+    },
+    {
+        "Start_Timestamp": "6.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "10.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Infant",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "An infant wearing a yellow hat, sitting in a child seat on the rear right, holding a toy."
+            }
+        ],
+        "summary": "An infant is seated in a child seat on the rear right, wearing a yellow hat and holding a toy. The child is secured with a seatbelt and appears to be playing with the toy.",
+        "actions": "The infant is sitting in the child seat, holding and playing with a toy.",
+        "key_objects": "Infant wearing a yellow hat, toy in hand, child seat, seatbelt fastened across the chest.",
+        "key_actions": "Infant holding a toy, playing with the toy.",
+        "prediction": "The infant is securely fastened and engaged with the toy. No immediate high-risk behaviors are predicted."
+    },
+    {
+        "Start_Timestamp": "11.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "16.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Infant",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "An infant wearing a yellow hat, sitting in a child seat on the rear right, fastened with a seatbelt, holding a pink stuffed toy."
+            }
+        ],
+        "summary": "An infant is seated in a child seat on the rear right, wearing a yellow hat and fastened with a seatbelt. The child is holding a pink stuffed toy and appears to be awake and calm.",
+        "actions": "The infant is sitting in the child seat, holding a pink stuffed toy, and is securely fastened with a seatbelt.",
+        "key_objects": "Infant wearing a yellow hat, pink stuffed toy, child seat, seatbelt.",
+        "key_actions": "Infant holding a pink stuffed toy, securely fastened with a seatbelt.",
+        "prediction": "The infant is securely fastened and appears calm. No immediate high-risk behaviors are predicted."
+    },
+    {
+        "Start_Timestamp": "16.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "20.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Infant",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "An infant wearing a yellow hat, sitting in a child seat on the rear right, fastened with a seatbelt, holding a bottle."
+            }
+        ],
+        "summary": "An infant is seated in a child seat on the rear right, wearing a yellow hat and fastened with a seatbelt. The child is holding a bottle and appears to be drinking from it. The environment inside the car is calm, with no signs of distress or dangerous behavior.",
+        "actions": "The infant is sitting in the child seat, wearing a yellow hat, fastened with a seatbelt, and holding a bottle.",
+        "key_objects": "Infant wearing a yellow hat, child seat, bottle, seatbelt.",
+        "key_actions": "Infant holding a bottle, drinking.",
+        "prediction": "The infant is securely fastened and appears content. No immediate high-risk behaviors are predicted. Continue monitoring for any changes in seatbelt position or behavior."
+    },
+    {
+        "Start_Timestamp": "21.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "25.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Infant",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "An infant wearing a yellow hat, seated in a child seat on the rear right, holding a pink stuffed toy."
+            }
+        ],
+        "summary": "An infant is seated in a child seat on the rear right, wearing a yellow hat and holding a pink stuffed toy. The seatbelt is fastened correctly across the chest. The child appears to be engaged with the toy and is not showing signs of distress or sleepiness.",
+        "actions": "The infant is sitting in the child seat, holding and playing with a pink stuffed toy.",
+        "key_objects": "Infant wearing a yellow hat, pink stuffed toy, child seat, seatbelt fastened across the chest.",
+        "key_actions": "Infant holding and playing with a pink stuffed toy.",
+        "prediction": "The infant is securely fastened and engaged with the toy, reducing the likelihood of any immediate risky behavior. Continued monitoring is advised to ensure the seatbelt remains properly fastened."
+    },
+    {
+        "Start_Timestamp": "26.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "30.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Infant",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "An infant wearing a yellow hat, seated in a child seat on the rear right, with a seatbelt fastened."
+            }
+        ],
+        "summary": "The scene shows an infant in a child seat on the rear right, wearing a yellow hat and securely fastened with a seatbelt. The child is awake and appears calm. A bottle is placed in the center console, and a stuffed toy is next to the child.",
+        "actions": "The infant is seated in the child seat, wearing a yellow hat, and is fastened with a seatbelt.",
+        "key_objects": "Infant in a yellow hat, child seat, seatbelt, stuffed toy, bottle in center console.",
+        "key_actions": "Infant seated and fastened with a seatbelt.",
+        "prediction": "The child remains securely fastened with the seatbelt. No immediate high-risk behaviors are predicted."
+    },
+    {
+        "Start_Timestamp": "31.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "35.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Infant",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "An infant wearing a yellow hat, sitting in a child seat on the rear right, fastened with a seatbelt, holding a pink stuffed toy."
+            }
+        ],
+        "summary": "An infant is seated in a child seat on the rear right, wearing a yellow hat and fastened with a seatbelt. The child is interacting with a pink stuffed toy, occasionally lifting the hat and playing with the toy.",
+        "actions": "The infant is sitting in the child seat, wearing a yellow hat, fastened with a seatbelt, and playing with a pink stuffed toy.",
+        "key_objects": "Yellow hat, pink stuffed toy, child seat, seatbelt.",
+        "key_actions": "Playing with a stuffed toy, lifting the hat.",
+        "prediction": "The child may continue to play with the toy and adjust the hat. No immediate seatbelt-related risks are observed."
+    },
+    {
+        "Start_Timestamp": "36.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "40.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Child",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "A child in the rear right seat, wearing a white shirt, seated in a child seat with a seatbelt fastened."
+            }
+        ],
+        "summary": "A child is seated in the rear right of the vehicle, securely fastened in a child seat with a seatbelt. The child appears to be awake and is holding a toy. The front passenger is seated calmly, and the vehicle is stationary with a person visible outside the car.",
+        "actions": "The child is sitting in the child seat, holding a toy, and is securely fastened with a seatbelt.",
+        "key_objects": "Child in a white shirt, toy in the childs hand, seatbelt fastened across the childs chest.",
+        "key_actions": "Child sitting, holding a toy, seatbelt fastened.",
+        "prediction": "The child is securely fastened and appears calm. No immediate high-risk behaviors are predicted. Continue monitoring for any changes in seatbelt status or child activity."
+    },
+    {
+        "Start_Timestamp": "41.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "45.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Child",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "Yes",
+                "Sleeping": "No",
+                "description": "A child in the rear right seat, wearing a white shirt, seated in a child seat with a seatbelt fastened."
+            }
+        ],
+        "summary": "A child is seated in the rear right seat, wearing a white shirt and fastened with a seatbelt. The child is interacting with a toy or object in the seat, appearing engaged and alert.",
+        "actions": "The child is seated and interacting with a toy or object, remaining fastened with the seatbelt.",
+        "key_objects": "Child in a white shirt, seated in a child seat with a seatbelt, toy or object in the seat.",
+        "key_actions": "Child interacting with a toy or object, seatbelt fastened.",
+        "prediction": "The child is securely fastened and engaged with a toy, likely to remain seated and safe."
+    },
+    {
+        "Start_Timestamp": "46.0s",
+        "sentiment": "Neutral",
+        "End_Timestamp": "50.0s",
+        "scene_theme": "Daily",
+        "characters": [
+            {
+                "is_child": "Child",
+                "number_of_children": "1",
+                "current_child": "1",
+                "gender": "Unknown",
+                "location": "Rear right",
+                "wearing_seat_belt": "No",
+                "Sleeping": "No",
+                "description": "A child in the rear right seat, wearing a white shirt, interacting with a stuffed toy, not wearing a seatbelt."
+            }
+        ],
+        "summary": "A child in the rear right seat is playing with a stuffed toy. The child is not wearing a seatbelt and is moving around the seat, showing active behavior.",
+        "actions": "The child is interacting with a stuffed toy, moving around the seat, and not wearing a seatbelt.",
+        "key_objects": "Stuffed toy, yellow drink bottle in the center console.",
+        "key_actions": "Child not wearing a seatbelt, interacting with a toy.",
+        "prediction": "The child may continue to move around the seat, potentially leading to unsafe behavior if not monitored."
+    }
+]
